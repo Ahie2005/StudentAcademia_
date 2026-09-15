@@ -1,0 +1,79 @@
+{
+  "opportunities": [
+    {
+      "id": 2,
+      "title": "Backend Developer Intern",
+      "company": "InfoTechX",
+      "description": "We require a backend developer intern who is proficient in Python and REST APIs. Needs experience with Docker.",
+      "location": "Kolkata/Hybrid",
+      "type": "Internship",
+      "skills": [
+        {
+          "name": "Python",
+          "level": 4
+        },
+        {
+          "name": "REST APIs",
+          "level": 3
+        },
+        {
+          "name": "Docker",
+          "level": 3
+        }
+      ],
+      "createdAt": "2026-09-15T06:50:06.616Z"
+    },
+    {
+      "id": 1,
+      "title": "Software Developer Intern",
+      "company": "TechNova",
+      "description": "Work on our core product APIs and internal tooling alongside senior engineers.",
+      "location": "Bengaluru • Hybrid",
+      "type": "Internship",
+      "skills": [
+        {
+          "name": "Python",
+          "level": 4
+        },
+        {
+          "name": "SQL",
+          "level": 3
+        },
+        {
+          "name": "REST APIs",
+          "level": 3
+        }
+      ],
+      "createdAt": "2026-09-01T09:00:00.000Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "opportunityId": 2,
+      "studentName": "Aarav Sharma",
+      "email": "aarav.sharma@gmail.com",
+      "note": "",
+      "skills": [
+        {
+          "name": "Python",
+          "required": 4,
+          "selfRating": 4
+        },
+        {
+          "name": "REST APIs",
+          "required": 3,
+          "selfRating": 2
+        },
+        {
+          "name": "Docker",
+          "required": 3,
+          "selfRating": 4
+        }
+      ],
+      "matchScore": 89,
+      "status": "Rejected",
+      "createdAt": "2026-09-15T06:50:47.768Z"
+    }
+  ]
+}

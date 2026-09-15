@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillBridge — Live Opportunity & Application Demo</title>
+<style>
+:root{
+  --navy:#0f1f3d;--blue:#2563eb;--blue-2:#eef4ff;--green:#0f9f72;--green-2:#eaf8f3;
+  --amber:#b7791f;--amber-2:#fff7e6;--red:#c24141;--red-2:#fff1f1;--bg:#f5f7fb;--card:#fff;
+  --line:#e5e9f0;--line-2:#d9e0ea;--text:#152033;--muted:#69758a;
+  --shadow-sm:0 2px 10px rgba(15,31,61,.045);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 70px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.brand{font-size:22px;font-weight:850;letter-spacing:-.04em;color:var(--navy)}.brand span{color:var(--blue)}
+.role-toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.role-toggle button{border:0;background:#fff;padding:9px 16px;font-weight:700;font-size:12px;color:#576274}
+.role-toggle button.active{background:var(--navy);color:#fff}
+.status-line{font-size:11px;color:var(--muted);margin-bottom:18px}
+.status-line.ok{color:var(--green)}.status-line.err{color:var(--red)}
+h1{font-size:22px;letter-spacing:-.03em;color:var(--navy);margin:4px 0 4px}
+.sub{color:var(--muted);font-size:12px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+.card h2,.card h3{color:var(--navy);margin-top:0}
+.card h3{font-size:14px}
+.field{display:grid;gap:5px;margin-bottom:12px}
+.field label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:#6f7a8e}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;outline:none;width:100%}
+.field textarea{min-height:70px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.skill-row{display:grid;grid-template-columns:1fr 110px auto;gap:8px;align-items:end;margin-bottom:8px}
+.btn{border:0;border-radius:8px;padding:9px 14px;font-weight:750;font-size:11px}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-light{background:#f1f4f8;color:#344158}
+.btn-danger{background:var(--red-2);color:var(--red)}
+.btn-outline{background:#fff;border:1px solid var(--line-2);color:#344158}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;font-size:9px;font-weight:800;background:var(--blue-2);color:var(--blue)}
+.pill.green{background:var(--green-2);color:var(--green)}
+.pill.amber{background:var(--amber-2);color:var(--amber)}
+.pill.red{background:var(--red-2);color:var(--red)}
+.tag{display:inline-flex;background:#f0f3f8;color:#455269;padding:5px 8px;border-radius:6px;font-size:10px;font-weight:650;margin:3px 4px 0 0}
+.opp{border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:10px}
+.opp-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.opp-title h3{margin:0 0 3px}
+.muted{color:var(--muted);font-size:11px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:10px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #edf0f4;font-size:11px;white-space:nowrap}
+th{font-size:8px;color:#788294;text-transform:uppercase;letter-spacing:.08em;background:#fafbfd}
+.modal{position:fixed;inset:0;background:#10182799;display:none;place-items:center;z-index:50;padding:18px}
+.modal-box{width:min(600px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;padding:20px}
+.close{float:right;border:0;background:#f1f3f7;border-radius:8px;padding:5px 8px}
+.hidden{display:none!important}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--navy);color:#fff;padding:11px 14px;border-radius:9px;display:none;z-index:60;font-size:11px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">Skill<span>Bridge</span> · Live Demo</div>
+    <div class="role-toggle">
+      <button id="btnStudent" class="active" onclick="setRole('student')">Student</button>
+      <button id="btnIndustry" onclick="setRole('industry')">Industry</button>
+    </div>
+  </div>
+  <div id="apiStatus" class="status-line">Checking backend connection…</div>
+
+  <!-- STUDENT VIEW -->
+  <div id="studentView">
+    <h1>Open opportunities</h1>
+    <div class="sub">Browse roles, self-rate each required skill (1–5), and apply.</div>
+    <div id="oppList"></div>
+
+    <div class="section-title" style="margin-top:26px">
+      <h1 style="margin:0">My applications</h1>
+    </div>
+    <div class="field" style="max-width:320px">
+      <label>Your email (used to look up your applications)</label>
+      <input id="studentEmailLookup" placeholder="you@student.edu" oninput="loadMyApplications()"/>
+    </div>
+    <div id="myApps"></div>
+  </div>
+
+  <!-- INDUSTRY VIEW -->
+  <div id="industryView" class="hidden">
+    <div class="card">
+      <h2>Post a new opportunity</h2>
+      <div class="form-grid">
+        <div class="field"><label>Role title</label><input id="postTitle" placeholder="Software Developer Intern"/></div>
+        <div class="field"><label>Company</label><input id="postCompany" placeholder="TechNova"/></div>
+        <div class="field"><label>Location / mode</label><input id="postLocation" placeholder="Bengaluru • Hybrid"/></div>
+        <div class="field"><label>Type</label>
+          <select id="postType"><option>Internship</option><option>Job</option><option>Apprenticeship</option><option>Live Project</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="postDescription" placeholder="Responsibilities and outcomes..."></textarea></div>
+
+      <h3>Required skills & proficiency (out of 5)</h3>
+      <div id="skillRows"></div>
+      <button class="btn btn-light" onclick="addSkillRow()">+ Add skill</button>
+      <div style="margin-top:16px"><button class="btn btn-blue" onclick="postOpportunity()">Publish opportunity</button></div>
+    </div>
+
+    <h1>My posted opportunities</h1>
+    <div id="industryOppList"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box"><button class="close" onclick="closeModal()">✕</button><div id="modalContent"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:4000/api';
+let role = 'student';
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._to);window._to=setTimeout(()=>t.style.display='none',2400)}
+function openModal(html){document.getElementById('modalContent').innerHTML=html;document.getElementById('modal').style.display='grid'}
+function closeModal(){document.getElementById('modal').style.display='none'}
+
+async function checkApi(){
+  const el=document.getElementById('apiStatus');
+  try{
+    const r=await fetch(API+'/opportunities');
+    if(!r.ok) throw new Error('bad response');
+    el.textContent='Connected to backend at '+API;
+    el.className='status-line ok';
+  }catch(e){
+    el.textContent='Cannot reach backend at '+API+'. Run "npm install && npm start" in the skillbridge-backend folder, then reload this page.';
+    el.className='status-line err';
+  }
+}
+
+function setRole(r){
+  role=r;
+  document.getElementById('btnStudent').classList.toggle('active', r==='student');
+  document.getElementById('btnIndustry').classList.toggle('active', r==='industry');
+  document.getElementById('studentView').classList.toggle('hidden', r!=='student');
+  document.getElementById('industryView').classList.toggle('hidden', r!=='industry');
+  if(r==='student') loadOpportunities(); else { resetSkillRows(); loadIndustryOpportunities(); }
+}
+
+// ---------- Student: browse + apply ----------
+
+async function loadOpportunities(){
+  const box=document.getElementById('oppList');
+  box.innerHTML='<div class="muted">Loading opportunities…</div>';
+  try{
+    const opps=await (await fetch(API+'/opportunities')).json();
+    if(!opps.length){box.innerHTML='<div class="card muted">No opportunities posted yet.</div>';return}
+    box.innerHTML=opps.map(o=>`
+      <div class="opp">
+        <div class="opp-title">
+          <div><h3>${o.title}</h3><div class="muted">${o.company} • ${o.location||'—'} • ${o.type}</div></div>
+        </div>
+        <p class="muted">${o.description||''}</p>
+        <div>${o.skills.map(s=>`<span class="tag">${s.name} — required level ${s.level}/5</span>`).join('')}</div>
+        <div style="margin-top:10px"><button class="btn btn-blue" onclick='openApplyModal(${o.id})'>Apply</button></div>
+      </div>`).join('');
+  }catch(e){box.innerHTML='<div class="card muted">Could not load opportunities. Is the backend running?</div>'}
+}
+
+async function openApplyModal(oppId){
+  const opp=await (await fetch(API+'/opportunities/'+oppId)).json();
+  const rows=opp.skills.map(s=>`
+    <div class="field">
+      <label>${s.name} — self-rate your proficiency (required: ${s.level}/5)</label>
+      <select data-skill="${s.name}" class="selfRating">
+        ${[1,2,3,4,5].map(n=>`<option value="${n}" ${n===s.level?'selected':''}>${n}</option>`).join('')}
+      </select>
+    </div>`).join('');
+  openModal(`
+    <h2>Apply — ${opp.title}</h2>
+    <p class="muted">${opp.company} • ${opp.location||''}</p>
+    <div class="field"><label>Your name</label><input id="appName" placeholder="Aarav Sharma"/></div>
+    <div class="field"><label>Your email</label><input id="appEmail" placeholder="you@student.edu"/></div>
+    ${rows}
+    <div class="field"><label>Note to the employer (optional)</label><textarea id="appNote" placeholder="Anything you'd like to add..."></textarea></div>
+    <button class="btn btn-blue" onclick="submitApplication(${opp.id})">Submit application</button>
+  `);
+}
+
+async function submitApplication(oppId){
+  const studentName=document.getElementById('appName').value.trim();
+  const email=document.getElementById('appEmail').value.trim();
+  const note=document.getElementById('appNote').value.trim();
+  const skills=[...document.querySelectorAll('.selfRating')].map(sel=>({name:sel.dataset.skill, rating:+sel.value}));
+  if(!studentName||!email){toast('Name and email are required');return}
+  try{
+    const res=await fetch(`${API}/opportunities/${oppId}/applications`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({studentName,email,note,skills})
+    });
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed to apply');
+    closeModal();
+    toast(`Application submitted — match score ${data.matchScore}%`);
+    document.getElementById('studentEmailLookup').value=email;
+    loadMyApplications();
+  }catch(e){toast(e.message)}
+}
+
+async function loadMyApplications(){
+  const email=document.getElementById('studentEmailLookup').value.trim();
+  const box=document.getElementById('myApps');
+  if(!email){box.innerHTML='<div class="card muted">Enter your email to see your applications.</div>';return}
+  try{
+    const apps=await (await fetch(API+'/applications?email='+encodeURIComponent(email))).json();
+    if(!apps.length){box.innerHTML='<div class="card muted">No applications found for this email yet.</div>';return}
+    box.innerHTML=`<div class="table-wrap"><table>
+      <tr><th>Opportunity</th><th>Company</th><th>Match</th><th>Status</th><th>Applied</th></tr>
+      ${apps.map(a=>`<tr>
+        <td>${a.opportunity?a.opportunity.title:'—'}</td>
+        <td>${a.opportunity?a.opportunity.company:'—'}</td>
+        <td>${a.matchScore}%</td>
+        <td><span class="pill ${a.status==='Shortlisted'?'green':a.status==='Rejected'?'red':''}">${a.status}</span></td>
+        <td>${new Date(a.createdAt).toLocaleString()}</td>
+      </tr>`).join('')}
+    </table></div>`;
+  }catch(e){box.innerHTML='<div class="card muted">Could not load applications.</div>'}
+}
+
+// ---------- Industry: post + shortlist ----------
+
+function resetSkillRows(){
+  document.getElementById('skillRows').innerHTML='';
+  addSkillRow();
+}
+function addSkillRow(){
+  const row=document.createElement('div');
+  row.className='skill-row';
+  row.innerHTML=`
+    <div class="field" style="margin-bottom:0"><label>Skill</label><input class="reqSkillName" placeholder="e.g. Python"/></div>
+    <div class="field" style="margin-bottom:0"><label>Required level</label>
+      <select class="reqSkillLevel">${[1,2,3,4,5].map(n=>`<option value="${n}" ${n===3?'selected':''}>${n} / 5</option>`).join('')}</select>
+    </div>
+    <button class="btn btn-light" onclick="this.closest('.skill-row').remove()">Remove</button>`;
+  document.getElementById('skillRows').appendChild(row);
+}
+
+async function postOpportunity(){
+  const title=document.getElementById('postTitle').value.trim();
+  const company=document.getElementById('postCompany').value.trim();
+  const location=document.getElementById('postLocation').value.trim();
+  const type=document.getElementById('postType').value;
+  const description=document.getElementById('postDescription').value.trim();
+  const skills=[...document.querySelectorAll('.skill-row')].map(r=>({
+    name:r.querySelector('.reqSkillName').value.trim(),
+    level:+r.querySelector('.reqSkillLevel').value
+  })).filter(s=>s.name);
+
+  if(!title||!company||skills.length===0){toast('Title, company and at least one skill are required');return}
+
+  try{
+    const res=await fetch(API+'/opportunities',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title,company,location,type,description,skills})
+    });
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed to post');
+    toast('Opportunity published');
+    document.getElementById('postTitle').value='';
+    document.getElementById('postCompany').value='';
+    document.getElementById('postLocation').value='';
+    document.getElementById('postDescription').value='';
+    resetSkillRows();
+    loadIndustryOpportunities();
+  }catch(e){toast(e.message)}
+}
+
+async function loadIndustryOpportunities(){
+  const box=document.getElementById('industryOppList');
+  box.innerHTML='<div class="muted">Loading…</div>';
+  try{
+    const opps=await (await fetch(API+'/opportunities')).json();
+    if(!opps.length){box.innerHTML='<div class="card muted">No opportunities posted yet.</div>';return}
+    box.innerHTML=opps.map(o=>`
+      <div class="opp">
+        <div class="opp-title">
+          <div><h3>${o.title}</h3><div class="muted">${o.company} • ${o.location||'—'} • ${o.type}</div></div>
+          <button class="btn btn-outline" onclick="viewApplications(${o.id},'${o.title.replace(/'/g,"\\'")}')">View applications</button>
+        </div>
+        <div>${o.skills.map(s=>`<span class="tag">${s.name} — required ${s.level}/5</span>`).join('')}</div>
+      </div>`).join('');
+  }catch(e){box.innerHTML='<div class="card muted">Could not load opportunities.</div>'}
+}
+
+async function viewApplications(oppId,title){
+  const apps=await (await fetch(API+`/opportunities/${oppId}/applications`)).json();
+  const rows=apps.length ? apps.map(a=>`
+    <tr>
+      <td>${a.studentName}<br><span class="muted">${a.email}</span></td>
+      <td>${a.matchScore}%</td>
+      <td>${a.skills.map(s=>`${s.name}: ${s.selfRating}/${s.required}`).join('<br>')}</td>
+      <td><span class="pill ${a.status==='Shortlisted'?'green':a.status==='Rejected'?'red':''}">${a.status}</span></td>
+      <td>
+        <button class="btn btn-green" onclick="setStatus(${a.id},'Shortlisted',${oppId},'${title.replace(/'/g,"\\'")}')">Shortlist</button>
+        <button class="btn btn-danger" onclick="setStatus(${a.id},'Rejected',${oppId},'${title.replace(/'/g,"\\'")}')">Reject</button>
+      </td>
+    </tr>`).join('') : `<tr><td colspan="5" class="muted">No applications yet.</td></tr>`;
+
+  openModal(`
+    <h2>Applications — ${title}</h2>
+    <div class="table-wrap"><table>
+      <tr><th>Candidate</th><th>Match</th><th>Self-rating vs required</th><th>Status</th><th>Action</th></tr>
+      ${rows}
+    </table></div>
+  `);
+}
+
+async function setStatus(appId,status,oppId,title){
+  try{
+    const res=await fetch(API+'/applications/'+appId,{
+      method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({status})
+    });
+    if(!res.ok) throw new Error('Failed to update status');
+    toast('Application marked '+status);
+    viewApplications(oppId,title);
+  }catch(e){toast(e.message)}
+}
+
+checkApi();
+resetSkillRows();
+loadOpportunities();
+</script>
+</body>
+</html>
